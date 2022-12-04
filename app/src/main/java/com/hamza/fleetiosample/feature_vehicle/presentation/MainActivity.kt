@@ -1,4 +1,4 @@
-package com.hamza.fleetiosample
+package com.hamza.fleetiosample.feature_vehicle.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
