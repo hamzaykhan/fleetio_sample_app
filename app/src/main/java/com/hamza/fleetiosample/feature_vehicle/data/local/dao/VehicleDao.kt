@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.LocationEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
-import com.hamza.fleetiosample.feature_vehicle.data.local.relational.VehicleWithLocation
+import com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational.VehicleWithLocation
 
 @Dao
 interface VehicleDao {
@@ -16,8 +16,12 @@ interface VehicleDao {
         vehicleEntities: List<VehicleWithLocation>
     ) {
         vehicleEntities.forEach {
-            insertVehicle(it.vehicle)
-            insertLocation(it.location)
+            val vehicle = getVehicleById(it.vehicle.id)
+            if (vehicle == null) {
+                insertVehicle(it.vehicle)
+                insertLocation(it.location)
+            }
+            // else update vehicle and location fields
         }
     }
 
@@ -41,6 +45,16 @@ interface VehicleDao {
         """
     )
     suspend fun getVehicles(): List<VehicleWithLocation>
+
+    @Transaction
+    @Query(
+        """
+            SELECT * 
+            FROM vehicleentity
+            WHERE id == :id
+        """
+    )
+    suspend fun getVehicleById(id: Int): VehicleWithLocation?
 
     @Transaction
     @Query(

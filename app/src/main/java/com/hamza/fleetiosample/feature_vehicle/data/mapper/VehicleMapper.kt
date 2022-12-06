@@ -2,7 +2,7 @@ package com.hamza.fleetiosample.feature_vehicle.data.mapper
 
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.LocationEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
-import com.hamza.fleetiosample.feature_vehicle.data.local.relational.VehicleWithLocation
+import com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational.VehicleWithLocation
 import com.hamza.fleetiosample.feature_vehicle.data.remote.dto.VehicleDto
 import com.hamza.fleetiosample.feature_vehicle.domain.model.LocationItem
 import com.hamza.fleetiosample.feature_vehicle.domain.model.VehicleItem

@@ -1,4 +1,4 @@
-package com.hamza.fleetiosample.feature_vehicle.data.local.relational
+package com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational
 
 import androidx.room.Embedded
 import androidx.room.Relation

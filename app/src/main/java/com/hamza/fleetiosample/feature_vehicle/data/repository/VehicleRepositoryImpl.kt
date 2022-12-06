@@ -3,12 +3,13 @@ package com.hamza.fleetiosample.feature_vehicle.data.repository
 import com.hamza.fleetiosample.common.wrapper.Resource
 import com.hamza.fleetiosample.common.wrapper.callApi
 import com.hamza.fleetiosample.feature_vehicle.data.local.FleetioDatabase
-import com.hamza.fleetiosample.feature_vehicle.data.local.relational.VehicleWithLocation
+import com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational.VehicleWithLocation
 import com.hamza.fleetiosample.feature_vehicle.data.mapper.toVehicleEntity
 import com.hamza.fleetiosample.feature_vehicle.data.mapper.toVehicleItem
 import com.hamza.fleetiosample.feature_vehicle.data.remote.FleetioApi
 import com.hamza.fleetiosample.feature_vehicle.domain.model.VehicleItem
 import com.hamza.fleetiosample.feature_vehicle.domain.repository.VehicleRepository
+import com.hamza.fleetiosample.feature_vehicle.domain.util.VehicleFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -21,26 +22,23 @@ class VehicleRepositoryImpl @Inject constructor(
 ): VehicleRepository {
 
     override suspend fun getVehicles(
-        page: Int,
-        name: String,
-        color: String,
-        year: Int,
-        secondaryMeter: Int,
-        sort: String
-    ): Flow<Resource<List<VehicleItem>>> = flow {
+        filter: VehicleFilter,
+        fetchLocal: Boolean
+    ): Flow<Resource<List<VehicleItem>>>  = flow {
         emit(Resource.Loading)
 
-        getLocalVehicles(page = page)
+        if (fetchLocal)
+            getLocalVehicles(page = filter.page)
 
         val result = callApi {
             val data = apiService.getVehicles(
-                page = page,
-                name = name,
-                color = color,
-                year = year,
-                secondaryMeter = secondaryMeter,
-                sort = sort
-            ).map { it.toVehicleItem(page = page) }
+                page = filter.page,
+                name = filter.name,
+                color = filter.color,
+                year = filter.year,
+                secondaryMeter = filter.secondaryMeter,
+                sort = filter.sort
+            ).map { it.toVehicleItem(page = filter.page) }
 
             insertVehicles(data.map { it.toVehicleEntity() })
 
@@ -55,12 +53,7 @@ class VehicleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLocalVehicles(
-        page: Int,
-        name: String,
-        color: String,
-        year: Int,
-        secondaryMeter: Int,
-        sort: String
+        page: Int
     ): Flow<Resource<List<VehicleItem>>>  = flow {
         val data = database.vehicleDao.getVehicles(page).map { it.toVehicleItem() }
 
