@@ -22,23 +22,24 @@ class VehicleRepositoryImpl @Inject constructor(
 ): VehicleRepository {
 
     override suspend fun getVehicles(
+        page: Int,
         filter: VehicleFilter,
         fetchLocal: Boolean
     ): Flow<Resource<List<VehicleItem>>>  = flow {
         emit(Resource.Loading)
 
         if (fetchLocal)
-            getLocalVehicles(page = filter.page)
+            getLocalVehicles(page = page)
 
         val result = callApi {
             val data = apiService.getVehicles(
-                page = filter.page,
+                page = page,
                 name = filter.name,
                 color = filter.color,
-                year = filter.year,
-                secondaryMeter = filter.secondaryMeter,
-                sort = filter.sort
-            ).map { it.toVehicleItem(page = filter.page) }
+                year = filter.year.toInt(),
+                secondaryMeter = if (filter.secondaryMeter) 1 else 0,
+                sort = filter.sortFormattedString()
+            ).map { it.toVehicleItem(page = page) }
 
             insertVehicles(data.map { it.toVehicleEntity() })
 

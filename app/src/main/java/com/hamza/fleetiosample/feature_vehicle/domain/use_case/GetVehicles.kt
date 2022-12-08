@@ -12,11 +12,13 @@ class GetVehicles @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        filter: VehicleFilter,
+        page: Int = 1,
+        filter: VehicleFilter = VehicleFilter(),
         fetchLocal: Boolean = true
     ): Flow<Resource<List<VehicleItem>>> {
         return repository.getVehicleRepository()
             .getVehicles(
+                page = page,
                 filter = filter,
                 fetchLocal = fetchLocal
             )

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FleetioSample</string>
+    <string name="search_by_name_str">Search vehicle by name...</string>
+    <string name="vehicle_name_str">Vehicle Name</string>
+    <string name="search_by_color_str">Search by vehicle color</string>
+    <string name="vehicle_color_str">Vehicle Color</string>
+    <string name="year_str">Year: %1$s Onwards</string>
+    <string name="secondary_meter_str">Sec. Meter</string>
+    <string name="sort_by_str">Sort By</string>
+    <string name="apply_str">Apply</string>
+    <string name="clear_str">Clear</string>
 </resources>

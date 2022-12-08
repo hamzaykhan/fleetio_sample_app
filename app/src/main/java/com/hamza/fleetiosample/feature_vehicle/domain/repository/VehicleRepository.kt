@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface VehicleRepository {
 
     suspend fun getVehicles(
+        page: Int,
         filter: VehicleFilter,
         fetchLocal: Boolean
     ): Flow<Resource<List<VehicleItem>>>
