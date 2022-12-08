@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.hamza.fleetiosample.R
+import com.hamza.fleetiosample.feature_vehicle.presentation.destinations.VehicleInfoDestination
 import com.hamza.fleetiosample.feature_vehicle.presentation.listing.filter.FilterBottomSheet
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -135,7 +136,11 @@ fun VehicleListing(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    // navigation to detail screen
+                                    navigator.navigate(
+                                        VehicleInfoDestination(
+                                            item = vehicle
+                                        )
+                                    )
                                 }
                         )
                         if(i < state.vehicles.size) {

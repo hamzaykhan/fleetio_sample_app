@@ -7,9 +7,10 @@ import java.util.*
 fun String?.toLocalDateTime(): LocalDateTime? {
     // 2022-05-12T11:54:38.407-07:00
     return this?.let {
-        val pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS-SS:SS"
+
+        val pattern = "yyyy-MM-dd'T'HH:mm:ss"
         val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
-        LocalDateTime.parse(it, formatter)
+        LocalDateTime.parse(it.split(".")[0], formatter)
     } ?: null
 }
 

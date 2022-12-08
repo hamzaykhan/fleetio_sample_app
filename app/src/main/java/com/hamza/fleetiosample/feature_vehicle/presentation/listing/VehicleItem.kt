@@ -55,14 +55,40 @@ fun VehicleImage(item: VehicleItem) {
 
 @Composable
 fun VehicleInfo(item: VehicleItem) {
-    Text(
-        text = item.name,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-        color = MaterialTheme.colorScheme.onBackground,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 1
-    )
+    Row (modifier = Modifier.
+        fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = item.name,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    text = item.make,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+
     Spacer(modifier = Modifier.width(4.dp))
     Text(
         text = item.model,

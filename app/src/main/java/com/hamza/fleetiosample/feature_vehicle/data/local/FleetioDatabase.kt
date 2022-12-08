@@ -9,9 +9,10 @@ import com.hamza.fleetiosample.feature_vehicle.data.local.dao.VehicleDao
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.CommentEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.LocationEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
+import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleSpecEntity
 
 @Database(
-    entities = [VehicleEntity::class, LocationEntity::class, CommentEntity::class],
+    entities = [VehicleEntity::class, LocationEntity::class, CommentEntity::class, VehicleSpecEntity::class],
     version = 1
 )
 @TypeConverters(

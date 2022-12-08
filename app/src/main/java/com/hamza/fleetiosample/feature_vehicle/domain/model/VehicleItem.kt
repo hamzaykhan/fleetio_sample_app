@@ -15,5 +15,6 @@ data class VehicleItem(
     val vin: String,
     val licensePlate: String,
     val location: LocationItem,
+    val specs: Specs,
     val page: Int
 ): Parcelable

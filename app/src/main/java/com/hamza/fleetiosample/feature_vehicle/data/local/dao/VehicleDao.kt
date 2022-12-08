@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.LocationEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
+import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleSpecEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational.VehicleWithLocation
 
 @Dao
@@ -20,6 +21,7 @@ interface VehicleDao {
             if (vehicle == null) {
                 insertVehicle(it.vehicle)
                 insertLocation(it.location)
+                insertVehicleSpec(it.spec)
             }
             // else update vehicle and location fields
         }
@@ -35,6 +37,12 @@ interface VehicleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocation(
         locationEntity: LocationEntity
+    )
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVehicleSpec(
+        vehicleSpec: VehicleSpecEntity
     )
 
     @Transaction
