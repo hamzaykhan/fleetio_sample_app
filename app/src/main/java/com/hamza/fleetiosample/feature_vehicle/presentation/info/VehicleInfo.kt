@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +33,13 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.hamza.fleetiosample.R
 import com.hamza.fleetiosample.feature_vehicle.domain.model.CommentItem
 import com.hamza.fleetiosample.feature_vehicle.domain.model.VehicleItem
+import com.hamza.fleetiosample.feature_vehicle.presentation.info.comments.BottomSheetComments
 import com.hamza.fleetiosample.feature_vehicle.presentation.info.comments.CommentItem
+import com.hamza.fleetiosample.feature_vehicle.presentation.listing.filter.FilterBottomSheet
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Destination
 fun VehicleInfo(
@@ -42,23 +48,46 @@ fun VehicleInfo(
 ) {
     val scrollState = rememberScrollState()
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .systemBarsPadding()
-    ) {
-        Column(
-            Modifier
-                .verticalScroll(state = scrollState)
-                .fillMaxWidth()
-        ) {
-            VehicleInfoImage(item = item)
-            VehiclePrimaryContent(item = item)
-            VehicleSpecInfo(item = item)
-            VehicleLocationOnMap(item = item)
+    val sheetState = rememberBottomSheetState(
+        initialValue = BottomSheetValue.Collapsed
+    )
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = sheetState
+    )
 
-            if (viewModel.state.commentItems.isNotEmpty())
-                VehicleComment(item = viewModel.state.commentItems.first())
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            BottomSheetComments(
+                viewModel = viewModel,
+                bottomSheetState = sheetState
+            )
+        },
+        sheetBackgroundColor = MaterialTheme.colorScheme.background,
+        sheetPeekHeight = 0.dp,
+        backgroundColor = MaterialTheme.colorScheme.background,
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .systemBarsPadding()
+        ) {
+            Column(
+                Modifier
+                    .verticalScroll(state = scrollState)
+                    .fillMaxWidth()
+            ) {
+                VehicleInfoImage(item = item)
+                VehiclePrimaryContent(item = item)
+                VehicleSpecInfo(item = item)
+                VehicleLocationOnMap(item = item)
+
+                if (viewModel.state.commentItems.isNotEmpty())
+                    VehicleComment(
+                        item = viewModel.state.commentItems.first(),
+                        sheetState = sheetState
+                    )
+            }
         }
     }
 }
@@ -224,8 +253,11 @@ fun VehicleLocationOnMap(item: VehicleItem) {
     Spacer(modifier = Modifier.width(16.dp))
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun VehicleComment(item: CommentItem) {
+fun VehicleComment(item: CommentItem, sheetState: BottomSheetState) {
+    val scope = rememberCoroutineScope()
+
     Text(
         text = "Comments: ",
         fontWeight = FontWeight.Bold,
@@ -249,8 +281,16 @@ fun VehicleComment(item: CommentItem) {
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         horizontalArrangement = Arrangement.End
     ) {
-        Button(onClick = {  }, modifier = Modifier) {
-            Text(text = "View Comments")
+        Button(onClick = {
+            scope.launch {
+                if(sheetState.isCollapsed) {
+                    sheetState.expand()
+                } else {
+                    sheetState.collapse()
+                }
+            }
+        }, modifier = Modifier) {
+            Text(text = "View All Comments")
         }
     }
 }

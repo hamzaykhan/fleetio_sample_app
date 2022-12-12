@@ -5,32 +5,47 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hamza.fleetiosample.common.repository.FleetioRepository
-import com.hamza.fleetiosample.common.wrapper.Resource
+import com.hamza.fleetiosample.common.pagination.DefaultPaginator
+import com.hamza.fleetiosample.feature_vehicle.domain.use_case.GetComments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class VehicleInfoViewModel @Inject constructor(
-    private val repository: FleetioRepository
+    private val commentUseCase: GetComments
 ): ViewModel() {
     var state by mutableStateOf(VehicleInfoState())
         private set
+
+    private val paginator = DefaultPaginator(
+        initialKey = state.page,
+        onLoadUpdate = { state = state.copy(isLoading = it) },
+        onRequest = { nextPage ->
+            commentUseCase.invoke(
+                page = nextPage,
+                sort = state.sortFormat,
+                fetchServer = state.fetchServer
+            )
+        },
+        getNextKey = { state.page + 1 },
+        onError = { state = state.copy(error = it.message, isEndReached = true) },
+        onSuccess = { item, nextKey ->
+            state = state.copy(
+                commentItems = if (state.page > 1) state.commentItems + item else item,
+                page = nextKey
+            )
+        },
+        onEmpty = {state = state.copy(isEndReached = true)}
+    )
 
     init {
         loadComments()
     }
 
-    private fun loadComments() {
+    fun loadComments() {
         viewModelScope.launch {
-            repository.getCommentRepository().getComments().collect { resource ->
-                when (resource) {
-                    is Resource.Success -> state = state.copy(commentItems = resource.data, isLoading = false)
-                    is Resource.Loading -> state = state.copy(isLoading = true)
-                    is Resource.Error -> state = state.copy(isLoading = false, error = resource.exception.message)
-                }
-            }
+            paginator.loadNextItems()
         }
     }
 }

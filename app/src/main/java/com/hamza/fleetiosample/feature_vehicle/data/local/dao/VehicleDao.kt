@@ -9,6 +9,7 @@ import com.hamza.fleetiosample.feature_vehicle.data.local.entity.LocationEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleSpecEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.relational.VehicleWithLocation
+import com.hamza.fleetiosample.feature_vehicle.domain.util.VehicleFilter
 
 @Dao
 interface VehicleDao {
@@ -69,9 +70,20 @@ interface VehicleDao {
         """
             SELECT * 
             FROM vehicleentity
-            WHERE page == :page
+            WHERE page == :page AND 
+            year >= :year AND 
+            secondaryMeter == :secondaryMeter AND 
+            LOWER(name) LIKE '%' || LOWER(:name) || '%' AND
+            LOWER(color) LIKE '%' || LOWER(:color) || '%'
+            ORDER BY :sortQuery
         """
     )
-    suspend fun getVehicles(page: Int): List<VehicleWithLocation>
+    suspend fun getVehicles(page: Int,
+                            name: String,
+                            color: String,
+                            year: Float,
+                            secondaryMeter: Int,
+                            sortQuery: String
+    ): List<VehicleWithLocation>
 
 }

@@ -3,6 +3,7 @@ package com.hamza.fleetiosample.feature_vehicle.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hamza.fleetiosample.feature_vehicle.domain.model.LocationItem
+import java.time.LocalDateTime
 
 @Entity
 data class VehicleEntity(
@@ -16,5 +17,8 @@ data class VehicleEntity(
     val vin: String,
     val licensePlate: String,
     val page: Int,
+    val color: String,
+    val createdAt: LocalDateTime?,
+    val secondaryMeter: Boolean,
     val isViewed: Boolean = false
 )

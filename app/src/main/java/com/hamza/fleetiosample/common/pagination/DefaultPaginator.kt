@@ -1,7 +1,9 @@
 package com.hamza.fleetiosample.common.pagination
 
 import com.hamza.fleetiosample.common.wrapper.Resource
+import com.hamza.fleetiosample.common.wrapper.TimeoutException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withTimeoutOrNull
 
 class DefaultPaginator<Key, Item>(
     private val initialKey: Key,
@@ -9,7 +11,8 @@ class DefaultPaginator<Key, Item>(
     private inline val onRequest: suspend (nextKey: Key) -> Flow<Resource<List<Item>>>,
     private inline val getNextKey: (Key) -> Key,
     private inline val onError: suspend (Throwable) -> Unit,
-    private inline val onSuccess: suspend (item: List<Item>, nextKey: Key) -> Unit
+    private inline val onSuccess: suspend (item: List<Item>, nextKey: Key) -> Unit,
+    private inline val onEmpty: (Boolean) -> Unit
 ): Paginator<Key, Item>{
 
     private var currentKey = initialKey
@@ -20,6 +23,7 @@ class DefaultPaginator<Key, Item>(
             return
 
         isMakingRequest = true
+
         onRequest(currentKey).collect { resource ->
             when (resource) {
                 is Resource.Success -> {
@@ -30,13 +34,17 @@ class DefaultPaginator<Key, Item>(
                 }
                 is Resource.Error -> {
                     isMakingRequest = false
-                    onError(resource.exception)
                     onLoadUpdate(false)
+                    onError(resource.exception)
                 }
                 is Resource.Loading -> onLoadUpdate(true)
+                is Resource.Empty -> {
+                    isMakingRequest = false
+                    onEmpty(true)
+                    onLoadUpdate(false)
+                }
             }
         }
-
     }
 
     override fun resetItems() {

@@ -22,6 +22,9 @@ fun VehicleDto.toVehicleItem(page: Int): VehicleItem  {
         year = year ?: -1,
         vin = vin ?: "",
         licensePlate = license_plate ?: "",
+        color = color ?: "",
+        secondaryMeter = secondary_meter ?: false,
+        createdAt = created_at.toLocalDateTime(),
         location = LocationItem(
             latitude = current_location_entry?.geolocation?.latitude ?: 0.0,
             longitude = current_location_entry?.geolocation?.longitude ?: 0.0,
@@ -60,7 +63,10 @@ fun VehicleItem.toVehicleEntity(): VehicleWithLocation {
             year = year,
             vin = vin,
             licensePlate = licensePlate,
-            page = page
+            color = color,
+            page = page,
+            secondaryMeter = secondaryMeter,
+            createdAt = createdAt
         ),
         location = LocationEntity(
             vehicleId = id,
@@ -100,7 +106,10 @@ fun VehicleWithLocation.toVehicleItem(): VehicleItem  {
         year = vehicle.year,
         vin = vehicle.vin,
         licensePlate = vehicle.licensePlate,
+        color = vehicle.color,
+        secondaryMeter = vehicle.secondaryMeter,
         page = vehicle.page,
+        createdAt = vehicle.createdAt,
         location = LocationItem(
             latitude = location.latitude,
             longitude = location.longitude,

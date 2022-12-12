@@ -26,7 +26,8 @@ interface CommentDao {
         """
             SELECT * 
             FROM commententity
-            WHERE page == :page
+            WHERE page == :page 
+            ORDER BY createdAt DESC
         """
     )
     suspend fun getComments(page: Int): List<CommentEntity>

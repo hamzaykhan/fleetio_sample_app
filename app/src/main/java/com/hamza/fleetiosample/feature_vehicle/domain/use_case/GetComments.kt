@@ -11,11 +11,15 @@ class GetComments @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        page: Int = 1
+        page: Int,
+        sort: String,
+        fetchServer: Boolean
     ): Flow<Resource<List<CommentItem>>> {
         return repository.getCommentRepository()
             .getComments(
-                page = page
+                page = page,
+                sort = sort,
+                fetchServer = fetchServer
             )
     }
 

@@ -11,13 +11,14 @@ interface VehicleRepository {
     suspend fun getVehicles(
         page: Int,
         filter: VehicleFilter,
-        fetchLocal: Boolean
+        fetchRemote: Boolean
     ): Flow<Resource<List<VehicleItem>>>
 
     suspend fun insertVehicles(vehicles: List<VehicleWithLocation>)
 
     suspend fun getLocalVehicles(
-        page: Int = 1
-    ): Flow<Resource<List<VehicleItem>>>
+        page: Int,
+        filter: VehicleFilter
+    ): List<VehicleItem>
 
 }

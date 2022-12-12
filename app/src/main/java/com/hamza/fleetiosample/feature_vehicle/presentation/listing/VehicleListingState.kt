@@ -10,7 +10,7 @@ data class VehicleListingState(
     val isEmpty: Boolean = false,
     val page: Int = 1,
     val endReached: Boolean = false,
-    val fetchLocal: Boolean = true,
+    val fetchRemote: Boolean = false,
     var filters: VehicleFilter = VehicleFilter()
 ) {
     fun updateFilters(filters: VehicleFilter) {

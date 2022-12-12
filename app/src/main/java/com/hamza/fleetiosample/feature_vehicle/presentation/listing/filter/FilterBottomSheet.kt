@@ -195,7 +195,6 @@ fun FilterBottomSheet(
                     sliderYear.value = vehicleFilter.year
                     secondaryMeterState.value = vehicleFilter.secondaryMeter
                     selectedSortOrder.value = vehicleFilter.sort
-                    viewModel.updateFetchLocal(value = true)
                 }) {
                     Text(
                         text = stringResource(id = R.string.clear_str),

@@ -1,6 +1,10 @@
 package com.hamza.fleetiosample.common.wrapper
 
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.IOException
+import java.net.SocketTimeoutException
 
 sealed class Resource<out R> {
     data class Success<out T>(val data: T) : Resource<T>()
@@ -20,15 +24,18 @@ sealed class Resource<out R> {
 
 suspend fun <T> callApi(apiCall: suspend () -> T): Resource<T> {
     return try {
-        val response = apiCall.invoke()
-        if (response.isEmptyResponse()) {
-            Resource.Empty
-        } else {
-            Resource.Success(response)
-        }
+        withTimeoutOrNull(10000) {
+            val response = apiCall.invoke()
+            if (response.isEmptyResponse()) {
+                Resource.Empty
+            } else {
+                Resource.Success(response)
+            }
+        } ?: throw SocketTimeoutException()
     } catch (throwable: Throwable) {
         when (throwable) {
             is IOException -> Resource.Error(NoInternetException())
+            is SocketTimeoutException -> Resource.Error(TimeoutException())
             else -> Resource.Error(throwable)
         }
     }
@@ -52,4 +59,9 @@ fun <T> T.isEmptyResponse(): Boolean {
 class NoInternetException() : IOException() {
     override val message: String
         get() = "No Internet Available"
+}
+
+class TimeoutException() : SocketTimeoutException() {
+    override val message: String
+        get() = "Server not responding"
 }

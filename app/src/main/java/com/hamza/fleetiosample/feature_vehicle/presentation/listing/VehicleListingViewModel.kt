@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,18 +34,19 @@ class VehicleListingViewModel @Inject constructor(
             vehicleUseCases.getVehicles().invoke(
                 page = nextPage,
                 filter = state.filters,
-                fetchLocal = state.fetchLocal
+                fetchRemote = state.fetchRemote
             )
         },
         getNextKey = { state.page + 1 },
         onError = { state = state.copy(errorMessage = it.message, endReached = true) },
         onSuccess = { item, nextKey ->
             state = state.copy(
-                vehicles = state.vehicles + item,
-                page = nextKey,
-                endReached = item.isEmpty()
+                fetchRemote = false,
+                vehicles = if (state.page > 1) state.vehicles + item else item,
+                page = nextKey
             )
-        }
+        },
+        onEmpty = {state = state.copy(endReached = true)}
     )
 
     init {
@@ -54,15 +56,16 @@ class VehicleListingViewModel @Inject constructor(
     fun onEvent(event: VehicleListingEvent) {
         when(event) {
             is VehicleListingEvent.Refresh -> {
+                state = state.copy(fetchRemote = true, page = 1)
                 resetItems()
                 state.updateFilters(VehicleFilter())
-                state = state.copy()
                 getVehicles()
             }
             is VehicleListingEvent.OnSearchQueryChange -> {
                 searchJob?.cancel()
                 searchJob = viewModelScope.launch {
                     delay(500L)
+                    state = state.copy(page = 1)
                     resetItems()
                     state.updateFilters(filters = VehicleFilter(name = event.query))
                     getVehicles()
@@ -87,6 +90,7 @@ class VehicleListingViewModel @Inject constructor(
                          secondaryMeter: Boolean,
                          sortList: List<SortOrder>
     ) {
+        state = state.copy(page = 1)
         state.updateFilters(
             VehicleFilter(
                 name = name,
@@ -97,11 +101,6 @@ class VehicleListingViewModel @Inject constructor(
             )
         )
         resetItems()
-        updateFetchLocal(false)
         getVehicles()
-    }
-
-    fun updateFetchLocal(value: Boolean) {
-        state = state.copy(fetchLocal = value)
     }
 }

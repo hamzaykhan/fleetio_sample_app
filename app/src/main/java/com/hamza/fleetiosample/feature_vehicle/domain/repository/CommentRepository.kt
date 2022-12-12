@@ -8,15 +8,16 @@ import kotlinx.coroutines.flow.Flow
 interface CommentRepository {
 
     suspend fun getComments(
-        page: Int = 0,
-        sort: String = "",
+        page: Int,
+        sort: String,
+        fetchServer: Boolean
     ): Flow<Resource<List<CommentItem>>>
 
     suspend fun insertComments(comments: List<CommentEntity>)
 
     suspend fun getLocalComments(
-        page: Int = 0,
-        sort: String = ""
-    ): Flow<Resource<List<CommentItem>>>
+        page: Int,
+        sort: String
+    ): List<CommentItem>
 
 }
