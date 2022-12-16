@@ -128,7 +128,9 @@ fun VehicleListing(
                 ) {
                     items(state.vehicles.size) { i ->
                         val vehicle = state.vehicles[i]
-                        if (i >= state.vehicles.size - 1 && !state.endReached && !state.isRefreshing) {
+                        if (i >= state.vehicles.size - 1 &&
+                            !state.endReached &&
+                            !state.isRefreshing) {
                             viewModel.getVehicles()
                         }
                         VehicleItem(

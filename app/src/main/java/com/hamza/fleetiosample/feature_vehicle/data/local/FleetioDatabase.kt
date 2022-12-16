@@ -12,7 +12,10 @@ import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleEntity
 import com.hamza.fleetiosample.feature_vehicle.data.local.entity.VehicleSpecEntity
 
 @Database(
-    entities = [VehicleEntity::class, LocationEntity::class, CommentEntity::class, VehicleSpecEntity::class],
+    entities = [VehicleEntity::class,
+        LocationEntity::class,
+        CommentEntity::class,
+        VehicleSpecEntity::class],
     version = 1
 )
 @TypeConverters(
