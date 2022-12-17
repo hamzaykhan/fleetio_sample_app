@@ -12,8 +12,4 @@ data class VehicleListingState(
     val endReached: Boolean = false,
     val fetchRemote: Boolean = false,
     var filters: VehicleFilter = VehicleFilter()
-) {
-    fun updateFilters(filters: VehicleFilter) {
-        this.filters = filters
-    }
-}
+)

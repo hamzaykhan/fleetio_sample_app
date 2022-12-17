@@ -56,9 +56,8 @@ class VehicleListingViewModel @Inject constructor(
     fun onEvent(event: VehicleListingEvent) {
         when(event) {
             is VehicleListingEvent.Refresh -> {
-                state = state.copy(fetchRemote = true, page = 1)
+                state = state.copy(fetchRemote = true, page = 1, filters = VehicleFilter())
                 resetItems()
-                state.updateFilters(VehicleFilter())
                 getVehicles()
             }
             is VehicleListingEvent.OnSearchQueryChange -> {
@@ -67,7 +66,9 @@ class VehicleListingViewModel @Inject constructor(
                     delay(500L)
                     state = state.copy(page = 1)
                     resetItems()
-                    state.updateFilters(filters = VehicleFilter(name = event.query))
+                    state = state.copy(
+                        filters = state.filters.copy(name = event.query)
+                    )
                     getVehicles()
                 }
             }
@@ -90,9 +91,8 @@ class VehicleListingViewModel @Inject constructor(
                          secondaryMeter: Boolean,
                          sortList: List<SortOrder>
     ) {
-        state = state.copy(page = 1)
-        state.updateFilters(
-            VehicleFilter(
+        state = state.copy(page = 1,
+            filters = VehicleFilter(
                 name = name,
                 color = color,
                 year = year,
